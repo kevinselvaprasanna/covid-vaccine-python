@@ -1,8 +1,16 @@
+#!/usr/bin/env python
 import requests
 from requests.exceptions import HTTPError
 import datetime
+from playsound import playsound
 
+import gi
+gi.require_version('Notify', '0.7')
 from gi.repository import Notify
+
+def mynotify(text):
+    Notify.Notification.new(text).show()
+
 
 url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin'
 pincode = '600091'
@@ -26,24 +34,23 @@ try:
     )
     response.raise_for_status()
 except HTTPError as http_err:
-    print(f'HTTP error occurred: {http_err}') 
+    mynotify(f'HTTP error occurred: {http_err}') 
 except Exception as err:
-    print(f'Other error occurred: {err}') 
+    mynotify(f'Other error occurred: {err}') 
 else:
-    print('Success!')
     json_response = response.json()
     sessions = json_response['sessions']
     for i in range(len(sessions)):
         if sessions[i]['available_capacity_dose1'] != 0 and sessions[i]["min_age_limit"] == 18:
             name = sessions[i]['name'] 
-            print('Vaccine Available at ' + name)
+            print('Vaccine')
             notification = Notify.Notification.new('Vaccine Available', '✔️ ' + name)
             notification.show()
             available = available + 1
+            playsound('alarm.mp3')
         
     if available == 0:
-        print('Nothing available')
-        notification = Notify.Notification.new('Nothing available', '❌')
-        notification.show()
+        print('NO')
+        notification = Notify.Notification.new('Nothing available', '❌').show()
 
 
