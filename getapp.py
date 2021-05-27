@@ -13,7 +13,7 @@ def mynotify(text):
 
 
 url = 'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict'
-pincodes = {'600091','600061','600096','600042'}
+pincodes = {600091,600061,600096,600042}
 
 
 today = datetime.date.today()
@@ -46,7 +46,7 @@ for day in days:
         for session in sessions:
             if session['available_capacity_dose1'] != 0 and session["min_age_limit"] == 18 and session["pincode"] in pincodes:
                 name = session['name'] 
-                print('Vaccine')
+                print('Vaccine ' + name)
                 Notify.Notification.new('Vaccine Available', '✔️ ' + name).show()
                 available += 1
             
